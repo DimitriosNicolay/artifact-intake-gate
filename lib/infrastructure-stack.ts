@@ -35,7 +35,10 @@ export class InfrastructureStack extends cdk.Stack {
 
     table.grantReadWriteData(validatorFunction);
 
-    bucket.addEventNotification(s3.EventType.OBJECT_CREATED, new s3n.LambdaDestination(validatorFunction));
+    bucket.addEventNotification(
+      s3.EventType.OBJECT_CREATED,
+      new s3n.LambdaDestination(validatorFunction),
+      { suffix: 'manifest.json' });
 
     const errorMetric = validatorFunction.metricErrors();
 
