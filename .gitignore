@@ -1,3 +1,4 @@
+*.txt
 *.js
 !jest.config.js
 *.d.ts
