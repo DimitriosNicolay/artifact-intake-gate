@@ -30,7 +30,7 @@ cat > "$MANIFEST_FILE" <<EOF
 }
 EOF
 
-echo "Fixture erzeugt in $OUT_DIR:"
+echo "Created fixture in $OUT_DIR:"
 echo "  Payload:  $PAYLOAD_FILE"
 echo "  Manifest: $MANIFEST_FILE"
 echo "  Checksum: $CHECKSUM"
