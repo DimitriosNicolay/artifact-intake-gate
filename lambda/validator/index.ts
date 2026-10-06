@@ -42,6 +42,33 @@ export const handler = async (event: S3Event): Promise<void> => {
   console.log("Parsed manifest:", manifest);
 
   if (!isValidManifest(manifest)) {
-    throw new Error("Manifest ist unvollständig oder fehlerhaft.");
+    throw new Error(
+      "Manifest is incomplete or invalid. Required fields: version, commitSha, checksum, buildTimestamp.",
+    );
   }
+
+  const payloadKey = objectKey.replace("manifest.json", "payload.txt");
+
+  const payloadCommand = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: payloadKey,
+  });
+
+  const payloadResponse = await s3Client.send(payloadCommand);
+  const payloadBytes = await payloadResponse.Body?.transformToByteArray();
+
+  const calculatedChecksum = createHash("sha256")
+    .update(payloadBytes ?? new Uint8Array())
+    .digest("hex");
+
+  const isChecksumValid = calculatedChecksum === manifest.checksum;
+
+  console.log(
+    "Computed checksum:",
+    calculatedChecksum,
+    "| Expected:",
+    manifest.checksum,
+    "| Valid:",
+    isChecksumValid,
+  );
 };
