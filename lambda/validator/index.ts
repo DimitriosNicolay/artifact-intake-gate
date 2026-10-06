@@ -1,5 +1,9 @@
 import { S3Event } from "aws-lambda";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from "@aws-sdk/client-s3";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { createHash } from "crypto";
@@ -20,6 +24,24 @@ function isValidManifest(obj: any): obj is ArtifactManifest {
     typeof obj.checksum === "string" &&
     typeof obj.buildTimestamp === "string"
   );
+}
+
+async function rejectArtifact(
+  bucketName: string,
+  manifestKey: string,
+  payloadKey: string,
+  reason: string,
+): Promise<never> {
+  console.log("Rejecting artifact:", reason);
+
+  await s3Client.send(
+    new DeleteObjectCommand({ Bucket: bucketName, Key: manifestKey }),
+  );
+  await s3Client.send(
+    new DeleteObjectCommand({ Bucket: bucketName, Key: payloadKey }),
+  );
+
+  throw new Error(reason);
 }
 
 export const handler = async (event: S3Event): Promise<void> => {
