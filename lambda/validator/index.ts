@@ -39,6 +39,20 @@ async function rejectArtifact(
 ): Promise<never> {
   console.log("Rejecting artifact:", reason);
 
+  const artifactId = `s3://${bucketName}/${manifestKey}`;
+
+  await ddbClient.send(
+    new PutCommand({
+      TableName: TABLE_NAME,
+      Item: {
+        artifactId,
+        status: "rejected",
+        reason,
+        validatedAt: new Date().toISOString(),
+      },
+    }),
+  );
+
   const payloadKey = derivePayloadKey(manifestKey);
 
   await s3Client.send(
@@ -51,13 +65,17 @@ async function rejectArtifact(
   throw new Error(reason);
 }
 
-async function approveArtifact(manifest: ArtifactManifest): Promise<void> {
+async function approveArtifact(
+  manifest: ArtifactManifest,
+  artifactId: string,
+): Promise<void> {
   console.log("Approving artifact:", manifest.commitSha);
 
   await ddbClient.send(
     new PutCommand({
       TableName: TABLE_NAME,
       Item: {
+        artifactId,
         commitSha: manifest.commitSha,
         version: manifest.version,
         checksum: manifest.checksum,
@@ -76,6 +94,7 @@ export const handler = async (event: S3Event): Promise<void> => {
   const manifestKey = decodeURIComponent(
     event.Records[0].s3.object.key.replace(/\+/g, " "),
   );
+  const artifactId = `s3://${bucketName}/${manifestKey}`;
   const payloadKey = derivePayloadKey(manifestKey);
 
   const manifestResponse = await s3Client.send(
@@ -123,5 +142,5 @@ export const handler = async (event: S3Event): Promise<void> => {
     return;
   }
 
-  await approveArtifact(manifest);
+  await approveArtifact(manifest, artifactId);
 };

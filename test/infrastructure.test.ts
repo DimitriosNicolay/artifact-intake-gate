@@ -18,13 +18,13 @@ test("Check DynamoDB-Table partition key attribute type", () => {
   template.hasResourceProperties("AWS::DynamoDB::GlobalTable", {
     KeySchema: [
       {
-        AttributeName: "commitSha",
+        AttributeName: "artifactId",
         KeyType: "HASH",
       },
     ],
     AttributeDefinitions: [
       {
-        AttributeName: "commitSha",
+        AttributeName: "artifactId",
         AttributeType: "S",
       },
     ],

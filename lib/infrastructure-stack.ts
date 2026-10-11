@@ -18,7 +18,7 @@ export class InfrastructureStack extends cdk.Stack {
     });
 
     const table = new dynamodb.TableV2(this, "ArtifactRegistry", {
-      partitionKey: { name: "commitSha", type: dynamodb.AttributeType.STRING },
+      partitionKey: { name: "artifactId", type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
