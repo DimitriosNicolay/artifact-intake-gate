@@ -4,7 +4,7 @@ import * as Infrastructure from "../lib/infrastructure-stack";
 
 test("Create a single S3-Bucket", () => {
   const app = new cdk.App();
-  const stack = new Infrastructure.InfrastructureStack(app, "TestStack");
+  const stack = new Infrastructure.InfrastructureStack(app, "testStack");
   const template = Template.fromStack(stack);
 
   template.resourceCountIs("AWS::S3::Bucket", 1);
@@ -12,7 +12,7 @@ test("Create a single S3-Bucket", () => {
 
 test("Check DynamoDB-Table partition key attribute type", () => {
   const app = new cdk.App();
-  const stack = new Infrastructure.InfrastructureStack(app, "TestStack");
+  const stack = new Infrastructure.InfrastructureStack(app, "testStack");
   const template = Template.fromStack(stack);
 
   template.hasResourceProperties("AWS::DynamoDB::GlobalTable", {
@@ -33,7 +33,7 @@ test("Check DynamoDB-Table partition key attribute type", () => {
 
 test("Alarm monitors Lambda errors with threshold 1", () => {
   const app = new cdk.App();
-  const stack = new Infrastructure.InfrastructureStack(app, "TestStack");
+  const stack = new Infrastructure.InfrastructureStack(app, "testStack");
   const template = Template.fromStack(stack);
 
   template.hasResourceProperties("AWS::CloudWatch::Alarm", {
@@ -45,7 +45,7 @@ test("Alarm monitors Lambda errors with threshold 1", () => {
 
 test("Validator uses Node.js 24", () => {
   const app = new cdk.App();
-  const stack = new Infrastructure.InfrastructureStack(app, "TestStack");
+  const stack = new Infrastructure.InfrastructureStack(app, "testStack");
   const template = Template.fromStack(stack);
 
   template.hasResourceProperties("AWS::Lambda::Function", {
@@ -53,9 +53,9 @@ test("Validator uses Node.js 24", () => {
   });
 });
 
-test("Validator TABLE_NAME references the registry table", () => {
+test("Validator tableName references the registry table", () => {
   const app = new cdk.App();
-  const stack = new Infrastructure.InfrastructureStack(app, "TestStack");
+  const stack = new Infrastructure.InfrastructureStack(app, "testStack");
   const template = Template.fromStack(stack);
   const tables = template.findResources("AWS::DynamoDB::GlobalTable");
   const tableId = Object.keys(tables)[0];
@@ -63,7 +63,7 @@ test("Validator TABLE_NAME references the registry table", () => {
   template.hasResourceProperties("AWS::Lambda::Function", {
     Environment: {
       Variables: {
-        TABLE_NAME: {
+        tableName: {
           Ref: tableId,
         },
       },

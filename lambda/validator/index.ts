@@ -10,7 +10,7 @@ import { createHash } from "crypto";
 
 const s3Client = new S3Client({});
 const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
-const TABLE_NAME = process.env.TABLE_NAME as string;
+const tableName = process.env.tableName as string;
 
 interface ArtifactManifest {
   version: string;
@@ -43,7 +43,7 @@ async function rejectArtifact(
 
   await ddbClient.send(
     new PutCommand({
-      TableName: TABLE_NAME,
+      TableName: tableName,
       Item: {
         artifactId,
         status: "rejected",
@@ -73,7 +73,7 @@ async function approveArtifact(
 
   await ddbClient.send(
     new PutCommand({
-      TableName: TABLE_NAME,
+      TableName: tableName,
       Item: {
         artifactId,
         commitSha: manifest.commitSha,

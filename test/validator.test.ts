@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { S3Client } from "@aws-sdk/client-s3";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 afterEach(() => {
   jest.restoreAllMocks();
@@ -33,4 +34,11 @@ test("Validator approves valid artifacts", async () => {
     .mockResolvedValueOnce(payloadResponse);
 
   jest.spyOn(S3Client.prototype, "send").mockImplementation(s3SendMock);
+
+  const ddbSendMock = jest.fn().mockResolvedValue({});
+  jest
+    .spyOn(DynamoDBDocumentClient.prototype, "send")
+    .mockImplementation(ddbSendMock);
+
+  process.env.tableName = "testTable";
 });

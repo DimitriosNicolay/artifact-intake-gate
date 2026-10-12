@@ -27,7 +27,7 @@ export class InfrastructureStack extends cdk.Stack {
       handler: "handler",
       runtime: lambda.Runtime.NODEJS_24_X,
       environment: {
-        TABLE_NAME: table.tableName,
+        tableName: table.tableName,
       },
     });
 
