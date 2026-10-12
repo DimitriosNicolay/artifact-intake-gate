@@ -12,8 +12,6 @@ I deliberately kept the scope small: upload an artifact, validate it, and record
 
 If you would like to read more about the design decisions, challenges, and what I learned while building this project, take a look at the project article on [my website](https://dnicolay.de).
 
-Placeholder: Project article URL
-
 ## Technologies
 
 | Technology                                                                                                                                                                                                | Role in this project                                                                                                      |
