@@ -32,6 +32,7 @@ export class InfrastructureStack extends cdk.Stack {
     });
 
     bucket.grantRead(validatorFunction);
+    bucket.grantDelete(validatorFunction);
 
     table.grantReadWriteData(validatorFunction);
 
